@@ -110,10 +110,10 @@ function Sidebar() {
       </div>
       <div className={"sb-search" + (lightTheme ? "" : " dark")}>
         <IconButton className={"icon" + (lightTheme ? "" : " dark")}>
-          <SearchIcon />
+        {/*  <SearchIcon /> */}
         </IconButton>
         <input
-          placeholder="Search"
+          placeholder="ALL USERS"
           className={"search-box" + (lightTheme ? "" : " dark")}
         />
       </div>

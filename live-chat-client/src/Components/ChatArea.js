@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MessageSelf from "./MessageSelf";
@@ -12,9 +13,10 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import { myContext } from "./MainContainer";
 import io from "socket.io-client";
+//import AttachFile from "@mui/icons-material/AttachFile";
 
-const  ENDPOINT="http://localhost:8000";
-var socket,chat
+const ENDPOINT = "http://localhost:8000";
+var socket, chat
 
 function ChatArea() {
   const lightTheme = useSelector((state) => state.themeKey);
@@ -25,18 +27,47 @@ function ChatArea() {
   // console.log(chat_id, chat_user);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const [allMessages, setAllMessages] = useState([]);
-  const[allMessagesCopy,setAllMessagesCopy]=useState([]);
-  
-  
+  const [allMessagesCopy, setAllMessagesCopy] = useState([]);
+  //file  share
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileInputChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+
+
   const handleEmojiSelect = (emoji) => {
     setMessageContent(messageContent + emoji);
   };
 
+  const sendFileMessage = () => {
+    // Trigger file input click to allow user to select a file
+    document.getElementById("file-input").click();
+  
+    // Function to handle file input change
+    const handleFileInputChange = (event) => {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+  
+      reader.onload = (event) => {
+        const fileContent = event.target.result;
+        localStorage.setItem('uploadedFile', fileContent);
+        console.log('File saved in local storage:', file.name);
+      };
+  
+      reader.readAsDataURL(file);
+    };
+  
+    // Event listener for file input change
+    document.getElementById("file-input").addEventListener("change", handleFileInputChange);
+  };
+  
   const { refresh, setRefresh } = useContext(myContext);
   const [loaded, setloaded] = useState(false);
-   const[socketConnectionsStatus,setSocketConnoectionsStatus]=useState([]);
+  const [socketConnectionsStatus, setSocketConnoectionsStatus] = useState([]);
   const sendMessage = () => {
-    var data=null;
+    var data = null;
     // console.log("SendMessage Fired to", chat_id._id);
     const config = {
       headers: {
@@ -53,31 +84,31 @@ function ChatArea() {
         config
       )
       .then(({ response }) => {
-        data=response;
+        data = response;
         console.log("Message Fired");
       });
   };
 
   //coonect  to socket
-  useEffect(()=>{
-    socket=io(ENDPOINT);
-    socket.emit("setup",userData);
-    socket.on("connection",()=>{
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", userData);
+    socket.on("connection", () => {
       setSocketConnoectionsStatus(!socketConnectionsStatus);
     });
-  },[]);
+  }, []);
   //new message  recieved
-  useEffect(()=>{
-    socket.on("message recieved",(newMessage)=>{
-      if(!allMessagesCopy || allMessagesCopy._id !==newMessage._id){
+  useEffect(() => {
+    socket.on("message recieved", (newMessage) => {
+      if (!allMessagesCopy || allMessagesCopy._id !== newMessage._id) {
 
-      }else{
-        setAllMessages([...allMessages],newMessage);
+      } else {
+        setAllMessages([...allMessages], newMessage);
       }
     });
 
   });
-//fetch chats
+  //fetch chats
   useEffect(() => {
     console.log("Users refreshed");
     const config = {
@@ -90,12 +121,12 @@ function ChatArea() {
       .then(({ data }) => {
         setAllMessages(data);
         setloaded(true);
-        socket.emit("join chat",chat_id);
+        socket.emit("join chat", chat_id);
         // console.log("Data from Acess Chat API ", data);
       });
-      setAllMessagesCopy(allMessages)
+    setAllMessagesCopy(allMessages)
     // scrollToBottom();
-  }, [refresh, chat_id, userData.data.token,allMessages]);
+  }, [refresh, chat_id, userData.data.token, allMessages]);
 
   if (!loaded) {
     return (
@@ -140,64 +171,78 @@ function ChatArea() {
             <p className={"con-title" + (lightTheme ? "" : " dark")}>
               {chat_user}
             </p>
-            
-            </div>
-            <IconButton className={"icon" + (lightTheme ? "" : " dark")}>
-              <DeleteIcon />
-            </IconButton>
-          </div>
-          <div className={"messages-container" + (lightTheme ? "" : " dark")}>
-            {allMessages
-              .slice(0)
-              .reverse()
-              .map((message, index) => {
-                const sender = message.sender;
-                const self_id = userData.data._id;
-                if (sender._id === self_id) {
-                  // console.log("I sent it ");
-                  return <MessageSelf props={message} key={index} />;
-                } else {
-                  // console.log("Someone Sent it");
-                  return <MessageOthers props={message} key={index} />;
-                }
-              })}
-          </div>
-          <div ref={messagesEndRef} className="BOTTOM" />
-<div className={"text-input-area" + (lightTheme ? "" : " dark")}>
-  <input
-    placeholder="Type a Message"
-    className={"search-box" + (lightTheme ? "" : " dark")}
-    value={messageContent}
-    onChange={(e) => {
-      setMessageContent(e.target.value);
-    }}
-    onKeyDown={(event) => {
-      if (event.code === "Enter") {
-        // Automatically send message when Enter key is pressed
-        sendMessage();
-        setMessageContent('');
-        setRefresh(!refresh);
-      }
-    }}
-  />
-   <Emoji onEmojiSelect={handleEmojiSelect} />
 
-  <IconButton
-    className={"icon" + (lightTheme ? "" : " dark")}
-    onClick={() => {
-      sendMessage();
-      setRefresh(!refresh);
-    }}
-  >
-    <SendIcon />
-  </IconButton>
-
-</div>
+          </div>
+          <IconButton className={"icon" + (lightTheme ? "" : " dark")}>
+            <DeleteIcon />
+          </IconButton>
         </div>
-      );
-    }
+        <div className={"messages-container" + (lightTheme ? "" : " dark")}>
+          {allMessages
+            .slice(0)
+            .reverse()
+            .map((message, index) => {
+              const sender = message.sender;
+              const self_id = userData.data._id;
+              if (sender._id === self_id) {
+                // console.log("I sent it ");
+                return <MessageSelf props={message} key={index} />;
+              } else {
+                // console.log("Someone Sent it");
+                return <MessageOthers props={message} key={index} />;
+              }
+            })}
+        </div>
+        <div ref={messagesEndRef} className="BOTTOM" />
+        <div className={"text-input-area" + (lightTheme ? "" : " dark")}>
+          <input
+            placeholder="Type a Message"
+            className={"search-box" + (lightTheme ? "" : " dark")}
+            value={messageContent}
+            onChange={(e) => {
+              setMessageContent(e.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.code === "Enter") {
+                // Automatically send message when Enter key is pressed
+                sendMessage();
+                setMessageContent(" ");
+                setRefresh(!refresh);
+              }
+            }}
+          />
+          <Emoji onEmojiSelect={handleEmojiSelect} />
+          <input
+            type="file"
+            accept="image/*,video/*,audio/*"
+            onChange={handleFileInputChange}
+            // style={{ display: "none" }}
+            id="file-input"
+            name="<AttachFileIcon />"
+          />
+          <label htmlFor="file-input">
+            <IconButton
+              className={"icon" + (lightTheme ? "" : " dark")}
+              onClick={sendFileMessage}
+            >
+              <AttachFileIcon />
+            </IconButton>
+          </label>
+          <IconButton
+            className={"icon" + (lightTheme ? "" : " dark")}
+            onClick={() => {
+              sendMessage();
+              setRefresh(!refresh);
+            }}
+          >
+            <SendIcon />
+          </IconButton>
+        </div>
+      </div>
+    );
   }
-  
-  export default ChatArea;
 
- 
+}
+
+export default ChatArea;
+

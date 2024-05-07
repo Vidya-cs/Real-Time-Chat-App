@@ -1,8 +1,11 @@
-import React from "react";
-import logo from "../Images/live-chat_512px.png";
+import React, { useEffect } from "react";
+// import logo from "../Images/live-chat_512px.png";
+import logo from "../Images/Screenshot (158).png"
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+//import Boat from "./Boat";
+//import Chatbot from "react-chatbot-kit";
 
 function Welcome() {
   const lightTheme = useSelector((state) => state.themeKey);
@@ -13,7 +16,8 @@ function Welcome() {
     console.log("User not Authenticated");
     nav("/");
   }
-
+  
+    
   return (
     <div className={"welcome-container" + (lightTheme ? "" : " dark")}>
       <motion.img
@@ -23,9 +27,13 @@ function Welcome() {
         alt="Logo"
         className="welcome-logo"
       />
+       
+
       <b>Hi , {userData.data.name} 👋</b>
       <p>View and text directly to people present in the chat Rooms.</p>
+     
     </div>
+    
   );
 }
 

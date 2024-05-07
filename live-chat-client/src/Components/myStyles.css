@@ -82,6 +82,7 @@ input:focus {
   border-radius: 10px;
   box-sizing: border-box;
 }
+
 .conversation-container:hover {
   background-color: #d9d9d9;
 }
@@ -119,15 +120,13 @@ input:focus {
   text-transform: capitalize;
 }
 
-.other-message-container .conversation-container:hover
-{
+.other-message-container .conversation-container:hover {
   background-color: white;
 }
 
-.other-message-container .con-lastMessage
-{
+.other-message-container .con-lastMessage {
   color: black;
-  font-size:medium;
+  font-size: medium;
   /* font-style: normal; */
   /* font-weight: bold; */
 }
@@ -189,6 +188,7 @@ input:focus {
 .messages-container::-webkit-scrollbar {
   display: none;
 }
+
 .messages-container::-webkit-scrollbar {
   display: none;
 }
@@ -272,7 +272,7 @@ input:focus {
   background-color: #f4f5f8;
   border-radius: 20px;
   display: flex;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 }
 
 .image-container {
@@ -362,30 +362,72 @@ input:focus {
   justify-content: space-evenly;
 }
 
+/* Extra for designing purpose */
+
+/* CSS */
+.loginButton, .signupButton {
+  display: flex;
+  align-items: center;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 0.7em 1.4em 0.7em 1.1em;
+  color: white;
+  background: #ad5389;
+  background: linear-gradient(0deg, rgb(94, 230, 180) 0%, rgb(102, 247, 184) 100%);
+  border: none;
+  box-shadow: 0 1em 1.5em -0.5em #14a73e98;
+  letter-spacing: 0.05em;
+  border-radius: 20em;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.loginButton:hover, .signupButton:hover {
+  box-shadow: 0 0.5em 1.5em -0.5em #14a73e98;
+}
+
+.loginButton:active, .signupButton:active {
+  box-shadow: 0 0.3em 1em -0.5em #14a73e98;
+}
+
+
+
+
+
+
+
 @media only screen and (max-width: 40em) {
   .sb-search {
     display: none;
   }
+
   .sb-conversations {
     display: none;
   }
+
   .sb-header {
     flex-direction: column;
     flex: 1;
     width: min-content;
   }
+
   .other-icons {
     flex-direction: column;
   }
+
   .chatArea-container {
     flex: 1;
   }
+
   .sidebar-container {
     flex: 0;
   }
+
   .main-container {
     height: 100vh;
     width: 100vw;
   }
 }
-

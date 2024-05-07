@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../Images/live-chat_512px.png";
+import logo from "../Images/Screenshot (158).png";
 import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -130,6 +130,7 @@ function Login() {
               }}
             />
             <Button
+            className="loginButton"
               variant="outlined"
               color="secondary"
               onClick={loginHandler}
@@ -201,6 +202,7 @@ function Login() {
               }}
             />
             <Button
+            className="signupButton"
               variant="outlined"
               color="secondary"
               onClick={signUpHandler}

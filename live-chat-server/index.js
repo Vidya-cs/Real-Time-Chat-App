@@ -1,8 +1,11 @@
-const express = require("express");
+const express = require('express');
+const multer = require('multer');
+const mongoose = require('mongoose');
+const Image = require('./modals/Image');
 const dotenv = require("dotenv");
-const mongoose = require("mongoose"); // Removed default import
-const app = express();
 const cors = require("cors");
+//  const Image = require('./modals/imageModel');
+const app = express();
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 // CORS Setup
@@ -17,6 +20,52 @@ dotenv.config();
 
 // Body parsing Middleware
 app.use(express.json());
+
+// Connect to MongoDB
+
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Upload image endpoint
+app.post('/upload-image', upload.single('image'), async (req, res) => {
+  try {
+    const { path } = req.file;
+    const { originalname } = req.file;
+
+    const newImage = new Image({
+      imageName: originalname,
+      imagePath: path,
+    });
+
+    const savedImage = await newImage.save();
+
+    res.json(savedImage);
+  } catch (err) {
+    console.error('Error uploading image:', err);
+    res.status(500).json({ error: 'Error uploading image' });
+  }
+});
+
+// Get images endpoint
+app.get('/get-images', async (req, res) => {
+  try {
+    const images = await Image.find();
+    res.json(images.map((image) => image.imagePath));
+  } catch (err) {
+    console.error('Error fetching images:', err);
+    res.status(500).json({ error: 'Error fetching images' });
+  }
+});
 
 // Importing routes
 const userRoutes = require("./Routes/userRoutes");
@@ -76,15 +125,22 @@ io.on("connection", (socket) => {
     socket.join(room);
   });
   socket.on("new message", (newMessageStatus) => {
- var chat = newMessageStatus.chat;
+    var chat = newMessageStatus.chat;
     if (!chat.users) {
       return console.log("chat.users not defined");
     }
 
     chat.users.forEach((user) => {
       if (user._id == newMessageStatus.sender._id) return;
-      socket.in(user._id).emit(",essage  recieved",newMessageRecieved);
+      socket.in(user._id).emit("newmessage", newMessageStatus.message);
     });
   });
 });
+
+
+
+
+
+
+
 

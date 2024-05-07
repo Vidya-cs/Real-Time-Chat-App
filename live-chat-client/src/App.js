@@ -9,6 +9,9 @@ import Users from "./Components/Users";
 import CreateGroups from "./Components/CreateGroups";
 import Groups from "./Components/Groups";
 import { useDispatch, useSelector } from "react-redux";
+import Boat from "./Components/Boat";
+//import ImageUpload from "./Components/ImageUpload";
+//import ImageUpload from "./Components/ImageUpload";
 
 function App() {
   const dispatch = useDispatch();
@@ -25,6 +28,8 @@ function App() {
           <Route path="users" element={<Users />}></Route>
           <Route path="groups" element={<Groups />}></Route>
           <Route path="create-groups" element={<CreateGroups />}></Route>
+          <Route path="help" element={<Boat />}></Route>
+
         </Route>
       </Routes>
     </div>
